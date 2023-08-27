@@ -1,0 +1,14 @@
+  ---- App Flow -----
+1. If not add any device then add ble device and store device address.
+2. If device add then show device conntion status show.
+3. If you disconnect that device then delete stored address.
+
+  ----- App Work -----
+1. First we have to bluetooth setup. This is android official doc.
+    https://developer.android.com/guide/topics/connectivity/bluetooth/setup#:~:text=The%20first%20step%20is%20adding,any%20and%20all%20Bluetooth%20activity.
+   
+   Doc has added bluetooth permission and Bluetooth Adapter, Enable bluetooth.  
+2. Find BLE devices   
+
+------ Error ------
+1 I was facing error when added bluetooth permission. Bluetooth connect Permission (runtime)

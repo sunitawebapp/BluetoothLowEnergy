@@ -29,7 +29,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [SearchBleDeviceFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-val TAG ="SearchBleDeviceFragment"
+private val TAG ="SearchBleDeviceFragment"
 class SearchBleDeviceFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -52,9 +52,7 @@ class SearchBleDeviceFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setupBluetooth()
-        }
+
         super.onViewCreated(view, savedInstanceState)
     }
     companion object {
@@ -77,21 +75,5 @@ class SearchBleDeviceFragment : Fragment() {
             }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    fun setupBluetooth(){
-        val REQUEST_ENABLE_BT=1
-        val bluetoothManager: BluetoothManager =requireContext().getSystemService(BluetoothManager::class.java)
-        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.getAdapter()
-        if (bluetoothAdapter == null) {
-            // Device doesn't support Bluetooth
-            Log.d(TAG, "setupBluetooth: Device doesn't support Bluetooth")
-        }
-        if (bluetoothAdapter?.isEnabled == false) {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-          startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-        }
-
-    }
-    
     
 }
