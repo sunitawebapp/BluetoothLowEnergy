@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            Log.d(TAG, "onReceive: "+intent.action)
             when (intent.action) {
                 BleService.ACTION_GATT_CONNECTED -> {
                   //  connected = true
@@ -112,5 +113,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter())
+    }
+
+    private fun makeGattUpdateIntentFilter(): IntentFilter? {
+        return IntentFilter().apply {
+            addAction(BleService.ACTION_GATT_CONNECTED)
+            addAction(BleService.ACTION_GATT_DISCONNECTED)
+        }
+    }
 
 }
