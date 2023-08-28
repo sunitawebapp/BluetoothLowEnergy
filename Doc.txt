@@ -9,6 +9,8 @@
    
    Doc has added bluetooth permission and Bluetooth Adapter, Enable bluetooth.  
 2. Find BLE devices   
+3.Connect to a GATT server
 
 ------ Error ------
 1 I was facing error when added bluetooth permission. Bluetooth connect Permission (runtime)
+2. I was facing error when find ble devices then you have to take find location. Otherwise you won't get any device.
