@@ -9,8 +9,7 @@ import com.srcodecorner.bluetoothlowenergy.databinding.RowBleAvailableDevicesBin
 import com.srcodecorner.bluetoothlowenergy.databinding.RowDeviceListBinding
 import com.srcodecorner.bluetoothlowenergy.ui.Fragment.SearchBleDeviceDetails.AvailableBleDetailsAdapter
 
-class ConnectedDeviceAdapter(var scannedDevicesLIst : MutableList<ScannedDevices>?,
-                             val clicklistener : (ConnectedDevices, Int) -> Unit
+class ConnectedDeviceAdapter(var scannedDevicesLIst : MutableList<ScannedDevices>?
 ) : RecyclerView.Adapter<ConnectedDeviceAdapter.ConnectedDeviceViewHolder>() {
     class ConnectedDeviceViewHolder(var binding: RowDeviceListBinding) : RecyclerView.ViewHolder(binding.root) {
 

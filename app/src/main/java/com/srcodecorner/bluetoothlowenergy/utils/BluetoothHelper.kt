@@ -12,6 +12,7 @@ import android.content.Intent
 import android.os.Handler
 import android.os.ParcelUuid
 import android.util.Log
+import com.srcodecorner.bluetoothlowenergy.Model.ConnectedDevices
 import com.srcodecorner.bluetoothlowenergy.Model.ScannedDevices
 import com.srcodecorner.bluetoothlowenergy.utils.UserPermissionFunctions.checkBluetoothFineLocationPermission
 import com.srcodecorner.bluetoothlowenergy.utils.UserPermissionFunctions.checkBluetoothScanPermission
@@ -27,6 +28,7 @@ object BluetoothHelper {
     // Stops scanning after 10 seconds.
     private val SCAN_PERIOD: Long = 10000
     var scannedDevicesLIst : MutableList<ScannedDevices>?= ArrayList()
+    var connectedDevicesLIst : MutableList<ConnectedDevices>?= ArrayList()
 
 
     fun initBluetoothAdapter(activity : Activity) : Boolean{
@@ -47,6 +49,13 @@ object BluetoothHelper {
 
     fun getScannedDeviceList()  : MutableList<ScannedDevices>?{
         return scannedDevicesLIst
+    }
+    fun setConnectedDeviceList(connectedDevicesList:MutableList<ConnectedDevices>?){
+        connectedDevicesLIst=connectedDevicesList
+    }
+
+    fun getConnectedDeviceList() : MutableList<ConnectedDevices>?{
+        return connectedDevicesLIst
     }
 
      fun scanLeDevice(leScanCallback: ScanCallback,activity : Activity) {

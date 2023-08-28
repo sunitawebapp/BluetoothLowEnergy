@@ -21,6 +21,7 @@ import com.srcodecorner.bluetoothlowenergy.MainActivity
 import com.srcodecorner.bluetoothlowenergy.Model.ScannedDevices
 import com.srcodecorner.bluetoothlowenergy.R
 import com.srcodecorner.bluetoothlowenergy.databinding.FragmentHomeBinding
+import com.srcodecorner.bluetoothlowenergy.ui.Fragment.SearchBleDeviceDetails.AvailableBleDetailsAdapter
 import com.srcodecorner.bluetoothlowenergy.utils.BluetoothHelper
 import com.srcodecorner.bluetoothlowenergy.utils.BluetoothHelper.getScannedDeviceList
 
@@ -46,6 +47,7 @@ class HomeFragment : Fragment() ,View.OnClickListener {
     private var param1: String? = null
     private var param2: String? = null
     private var binding : FragmentHomeBinding? =null
+    lateinit var availableBleDetailsAdapter : ConnectedDeviceAdapter
 
     private var scanning = false
     private val handler = Handler()
@@ -89,6 +91,7 @@ class HomeFragment : Fragment() ,View.OnClickListener {
                 BluetoothHelper.getScannedDeviceList()
                 if ("A4:DA:32:67:8F:77".equals(BluetoothHelper.scannedDevicesLIst?.get(0)?.deviceAddress)){
                     (activity as MainActivity).connectToBle("A4:DA:32:67:8F:77")
+                    setAdapter()
                 }
 
                 Log.d(TAG, "onScanResult: "+result.device.name)
@@ -106,7 +109,10 @@ class HomeFragment : Fragment() ,View.OnClickListener {
             view.fabAddDevice.setOnClickListener(this@HomeFragment)
         }
     }
-
+    fun setAdapter(){
+        availableBleDetailsAdapter= ConnectedDeviceAdapter()
+        binding?.rvDevices.adapter= availableBleDetailsAdapter
+    }
     companion object {
         /**
          * Use this factory method to create a new instance of
