@@ -17,14 +17,19 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.DialogFragmentNavigatorDestinationBuilder
-import com.srcodecorner.bluetoothlowenergy.MainActivity
+
 import com.srcodecorner.bluetoothlowenergy.Model.ConnectedDevices
 import com.srcodecorner.bluetoothlowenergy.Model.ScannedDevices
 import com.srcodecorner.bluetoothlowenergy.R
 import com.srcodecorner.bluetoothlowenergy.databinding.FragmentSearchBleDeviceBinding
+import com.srcodecorner.bluetoothlowenergy.ui.Activity.MainActivity
+import com.srcodecorner.bluetoothlowenergy.ui.Activity.MainViewModel
 import com.srcodecorner.bluetoothlowenergy.utils.BluetoothHelper
+import com.srcodecorner.bluetoothlowenergy.utils.BluetoothHelper.findBleDevice
 import com.srcodecorner.bluetoothlowenergy.utils.Constents.REQUEST_ENABLE_BT
+import com.srcodecorner.bluetoothlowenergy.utils.HelperFunction
 import com.srcodecorner.bluetoothlowenergy.utils.UserPermissionFunctions
 
 // TODO: Rename parameter arguments, choose names that match
@@ -46,6 +51,7 @@ class SearchBleDeviceFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    val mainViewModel : MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,28 +73,16 @@ class SearchBleDeviceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         searchBleDevice()
         setAdapter()
+
+        mainViewModel.deviceConnectionLivedata.observe(viewLifecycleOwner){
+            HelperFunction.toast(requireActivity(), it.toString())
+        }
         super.onViewCreated(view, savedInstanceState)
     }
     fun searchBleDevice(){
         // Device scan callback.
-        val leScanCallback: ScanCallback = object : ScanCallback() {
-            override fun onScanResult(callbackType: Int, result: ScanResult) {
-                super.onScanResult(callbackType, result)
-                BluetoothHelper.scannedDevicesLIst?.clear()
-                //   leDeviceListAdapter.addDevice(result.device)
-                //  leDeviceListAdapter.notifyDataSetChanged()
-                UserPermissionFunctions.checkBluetoothConnectPermission(requireActivity())
-                BluetoothHelper.scannedDevicesLIst?.add(
-                    ScannedDevices(result.device.name,
-                        result.device.address)
-                )
-                BluetoothHelper.getScannedDeviceList()
 
-                Log.d(com.srcodecorner.bluetoothlowenergy.ui.Fragment.HomeFragmentDetails.TAG, "onScanResult: "+result.device.name)
-
-            }
-        }
-        BluetoothHelper.scanLeDevice(leScanCallback, requireActivity())
+        findBleDevice(requireActivity())
         scannedDevicesLIst= BluetoothHelper.getScannedDeviceList()
     }
     fun setAdapter(){

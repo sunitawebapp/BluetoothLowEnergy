@@ -16,17 +16,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.srcodecorner.bluetoothlowenergy.MainActivity
 import com.srcodecorner.bluetoothlowenergy.Model.ScannedDevices
 import com.srcodecorner.bluetoothlowenergy.R
 import com.srcodecorner.bluetoothlowenergy.databinding.FragmentHomeBinding
+import com.srcodecorner.bluetoothlowenergy.ui.Activity.MainActivity
+import com.srcodecorner.bluetoothlowenergy.ui.Activity.MainViewModel
 import com.srcodecorner.bluetoothlowenergy.ui.Fragment.SearchBleDeviceDetails.AvailableBleDetailsAdapter
 import com.srcodecorner.bluetoothlowenergy.utils.BluetoothHelper
 import com.srcodecorner.bluetoothlowenergy.utils.BluetoothHelper.getScannedDeviceList
 
 import com.srcodecorner.bluetoothlowenergy.utils.BluetoothHelper.scanLeDevice
 import com.srcodecorner.bluetoothlowenergy.utils.Constents
+import com.srcodecorner.bluetoothlowenergy.utils.HelperFunction.toast
 import com.srcodecorner.bluetoothlowenergy.utils.UserPermissionFunctions
 import java.util.*
 
@@ -54,6 +57,8 @@ class HomeFragment : Fragment() ,View.OnClickListener {
     // Stops scanning after 10 seconds.
     private val SCAN_PERIOD: Long = 10000000
 
+    val mainViewModel : MainViewModel by viewModels()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +80,10 @@ class HomeFragment : Fragment() ,View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewOnClickListener()
+
+        mainViewModel.deviceConnectionLivedata.observe(viewLifecycleOwner){
+            toast(requireActivity(),it.toString())
+        }
 
         // Device scan callback.
         val leScanCallback: ScanCallback = object : ScanCallback() {
@@ -110,8 +119,8 @@ class HomeFragment : Fragment() ,View.OnClickListener {
         }
     }
     fun setAdapter(){
-        availableBleDetailsAdapter= ConnectedDeviceAdapter()
-        binding?.rvDevices.adapter= availableBleDetailsAdapter
+        //availableBleDetailsAdapter= ConnectedDeviceAdapter()
+       // binding?.rvDevices?.adapter= availableBleDetailsAdapter
     }
     companion object {
         /**

@@ -1,4 +1,4 @@
-package com.srcodecorner.bluetoothlowenergy
+package com.srcodecorner.bluetoothlowenergy.ui.Activity
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
@@ -11,10 +11,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.viewModels
 import com.srcodecorner.bluetoothlowenergy.Model.ScannedDevices
+import com.srcodecorner.bluetoothlowenergy.R
 import com.srcodecorner.bluetoothlowenergy.Service.BleService
 import com.srcodecorner.bluetoothlowenergy.utils.BluetoothHelper
 
@@ -27,7 +30,7 @@ private val TAG="MainActivity"
 class MainActivity : AppCompatActivity() {
 
     var bleService : BleService?= null
-
+   internal val mainViewModel : MainViewModel by viewModels()
 
     // Code to manage Service lifecycle.
     private var  serviceConnection: ServiceConnection? = object : ServiceConnection {
@@ -58,10 +61,13 @@ class MainActivity : AppCompatActivity() {
                 BleService.ACTION_GATT_CONNECTED -> {
                   //  connected = true
                    // updateConnectionState(R.string.connected)
+                    mainViewModel.deviceConnectionLivedata.postValue(true)
                 }
                 BleService.ACTION_GATT_DISCONNECTED -> {
                    // connected = false
                   //  updateConnectionState(R.string.disconnected)
+
+                    mainViewModel.deviceConnectionLivedata.postValue(false)
                 }
             }
         }
@@ -89,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         checkBluetoothEnable()
-
+        BluetoothHelper.findBleDevice(this)
 
 
         val gattServiceIntent = Intent(this, BleService::class.java)

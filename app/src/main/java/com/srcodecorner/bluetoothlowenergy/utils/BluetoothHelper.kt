@@ -1,5 +1,6 @@
 package com.srcodecorner.bluetoothlowenergy.utils
 
+import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothGatt
@@ -9,9 +10,11 @@ import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.ParcelUuid
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import com.srcodecorner.bluetoothlowenergy.Model.ConnectedDevices
 import com.srcodecorner.bluetoothlowenergy.Model.ScannedDevices
 import com.srcodecorner.bluetoothlowenergy.utils.UserPermissionFunctions.checkBluetoothFineLocationPermission
@@ -58,7 +61,29 @@ object BluetoothHelper {
         return connectedDevicesLIst
     }
 
-     fun scanLeDevice(leScanCallback: ScanCallback,activity : Activity) {
+    fun findBleDevice(activity : Activity){
+        //  val leDeviceListAdapter = LeDeviceListAdapter()
+        // Device scan callback.
+          val leScanCallback: ScanCallback = object : ScanCallback() {
+             override fun onScanResult(callbackType: Int, result: ScanResult) {
+                 super.onScanResult(callbackType, result)
+                 scannedDevicesLIst?.clear()
+              //   leDeviceListAdapter.addDevice(result.device)
+               //  leDeviceListAdapter.notifyDataSetChanged()
+              UserPermissionFunctions.checkBluetoothConnectPermission(activity)
+                 scannedDevicesLIst?.add(
+                     ScannedDevices(result.device.name,
+                         result.device.address)
+                 )
+
+                 Log.d(TAG, "onScanResult: "+result.device.address)
+             }
+         }
+           scanLeDevice(leScanCallback,activity)
+    }
+
+
+    fun scanLeDevice(leScanCallback: ScanCallback,activity : Activity) {
          var   filters :MutableList<ScanFilter> = java.util.ArrayList()
          val bluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
         checkBluetoothScanPermission(activity)

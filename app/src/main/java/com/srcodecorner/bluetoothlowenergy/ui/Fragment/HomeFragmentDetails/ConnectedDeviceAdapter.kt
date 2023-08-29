@@ -27,7 +27,7 @@ class ConnectedDeviceAdapter(var scannedDevicesLIst : MutableList<ScannedDevices
         holder.binding.tvDeviceName.text = scannedDevicesLIst?.get(position)?.deviceName ?: ""
         holder.binding.tvDeviceConnectionStatus.text = "Connected"
         holder.itemView.setOnClickListener {
-            clicklistener(ConnectedDevices(list!!.deviceName,list!!.deviceAddress,true),position)
+           // clicklistener(ConnectedDevices(list!!.deviceName,list!!.deviceAddress,true),position)
         }
     }
 
