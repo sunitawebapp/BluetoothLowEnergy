@@ -29,7 +29,7 @@ object BluetoothHelper {
     private var scanning = false
     private val handler = Handler()
     // Stops scanning after 10 seconds.
-    private val SCAN_PERIOD: Long = 10000
+    private val SCAN_PERIOD: Long = 100000
     var scannedDevicesLIst : MutableList<ScannedDevices>?= ArrayList()
     var connectedDevicesLIst : MutableList<ConnectedDevices>?= ArrayList()
 

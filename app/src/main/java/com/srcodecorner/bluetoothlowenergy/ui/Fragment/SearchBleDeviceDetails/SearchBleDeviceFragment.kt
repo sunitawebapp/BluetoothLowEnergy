@@ -92,7 +92,6 @@ class SearchBleDeviceFragment : Fragment() {
         binding.rvDevices.adapter= availableBleDetailsAdapter
     }
     fun listRowItemClicked(connectedDevices: ConnectedDevices,pos : Int){
-        Log.d(TAG, "listRowItemClicked: "+connectedDevices)
         (activity as MainActivity).connectToBle(connectedDevices.deviceAddress)
     }
     companion object {

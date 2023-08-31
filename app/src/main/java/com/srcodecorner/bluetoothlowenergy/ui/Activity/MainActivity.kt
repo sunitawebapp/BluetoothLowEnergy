@@ -30,7 +30,7 @@ private val TAG="MainActivity"
 class MainActivity : AppCompatActivity() {
 
     var bleService : BleService?= null
-   internal val mainViewModel : MainViewModel by viewModels()
+   private val mainViewModel : MainViewModel by viewModels ()
 
     // Code to manage Service lifecycle.
     private var  serviceConnection: ServiceConnection? = object : ServiceConnection {
@@ -61,13 +61,13 @@ class MainActivity : AppCompatActivity() {
                 BleService.ACTION_GATT_CONNECTED -> {
                   //  connected = true
                    // updateConnectionState(R.string.connected)
-                    mainViewModel.deviceConnectionLivedata.postValue(true)
+                    mainViewModel.getConnectionStatus(true)
                 }
                 BleService.ACTION_GATT_DISCONNECTED -> {
                    // connected = false
                   //  updateConnectionState(R.string.disconnected)
 
-                    mainViewModel.deviceConnectionLivedata.postValue(false)
+                    mainViewModel.getConnectionStatus(false)
                 }
             }
         }
@@ -100,7 +100,6 @@ class MainActivity : AppCompatActivity() {
 
         val gattServiceIntent = Intent(this, BleService::class.java)
         serviceConnection?.let { bindService(gattServiceIntent, it, Context.BIND_AUTO_CREATE) }
-
 
 
     }

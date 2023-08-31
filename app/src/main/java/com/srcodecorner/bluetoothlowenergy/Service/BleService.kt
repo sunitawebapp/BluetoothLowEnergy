@@ -11,7 +11,10 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import com.srcodecorner.bluetoothlowenergy.utils.BluetoothHelper
 import com.srcodecorner.bluetoothlowenergy.utils.BluetoothHelper.getBluetoothAdapter
+import com.srcodecorner.bluetoothlowenergy.utils.HelperFunction
+import com.srcodecorner.bluetoothlowenergy.utils.UserPermissionFunctions
 
 private val TAG="BleService"
 class BleService : Service() {
@@ -82,6 +85,32 @@ class BleService : Service() {
         } ?: run {
             Log.w(TAG, "BluetoothAdapter not initialized")
             return false
+        }
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        close()
+        return super.onUnbind(intent)
+    }
+
+    private fun close() {
+        bluetoothGatt?.let { gatt ->
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+
+            }
+            bluetoothGatt!!.close()
+            bluetoothGatt = null
         }
     }
     private fun broadcastUpdate(action: String) {

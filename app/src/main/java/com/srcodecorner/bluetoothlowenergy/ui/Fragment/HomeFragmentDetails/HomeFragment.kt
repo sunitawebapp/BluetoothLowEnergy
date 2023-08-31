@@ -16,8 +16,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.srcodecorner.bluetoothlowenergy.Model.ConnectedDevices
 import com.srcodecorner.bluetoothlowenergy.Model.ScannedDevices
 import com.srcodecorner.bluetoothlowenergy.R
 import com.srcodecorner.bluetoothlowenergy.databinding.FragmentHomeBinding
@@ -32,6 +34,7 @@ import com.srcodecorner.bluetoothlowenergy.utils.Constents
 import com.srcodecorner.bluetoothlowenergy.utils.HelperFunction.toast
 import com.srcodecorner.bluetoothlowenergy.utils.UserPermissionFunctions
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -56,10 +59,12 @@ class HomeFragment : Fragment() ,View.OnClickListener {
     private val handler = Handler()
     // Stops scanning after 10 seconds.
     private val SCAN_PERIOD: Long = 10000000
+    private val mainViewModel: MainViewModel by activityViewModels()
+  //  val mainViewModel : MainViewModel by viewModels()
 
-    val mainViewModel : MainViewModel by viewModels()
+    var connectedDevicesList : MutableList<ConnectedDevices>?= ArrayList()
 
-
+    var hundle= Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,33 +87,45 @@ class HomeFragment : Fragment() ,View.OnClickListener {
         viewOnClickListener()
 
         mainViewModel.deviceConnectionLivedata.observe(viewLifecycleOwner){
-            toast(requireActivity(),it.toString())
+            connectedDevicesList?.clear()
+            connectedDevicesList?.add(
+                ConnectedDevices(
+                    BluetoothHelper.scannedDevicesLIst?.get(0)?.deviceName ?: "",
+                    BluetoothHelper.scannedDevicesLIst?.get(0)?.deviceAddress ?: "",
+                    it
+            )
+            )
+            Log.d(TAG, "onViewCreated: "+connectedDevicesList)
+
+            setAdapter()
         }
 
-        // Device scan callback.
-        val leScanCallback: ScanCallback = object : ScanCallback() {
-            override fun onScanResult(callbackType: Int, result: ScanResult) {
-                super.onScanResult(callbackType, result)
-                BluetoothHelper.scannedDevicesLIst?.clear()
-                //   leDeviceListAdapter.addDevice(result.device)
-                //  leDeviceListAdapter.notifyDataSetChanged()
-                UserPermissionFunctions.checkBluetoothConnectPermission(requireActivity())
-                BluetoothHelper.scannedDevicesLIst?.add(
-                    ScannedDevices(result.device.name,
-                        result.device.address)
-                )
-                BluetoothHelper.getScannedDeviceList()
+        BluetoothHelper.findBleDevice(requireActivity())
+       /* requireActivity().runOnUiThread {
+            if (BluetoothHelper.scannedDevicesLIst?.size!! > 0){
                 if ("A4:DA:32:67:8F:77".equals(BluetoothHelper.scannedDevicesLIst?.get(0)?.deviceAddress)){
                     (activity as MainActivity).connectToBle("A4:DA:32:67:8F:77")
                     setAdapter()
                 }
+            }
+        }*/
 
-                Log.d(TAG, "onScanResult: "+result.device.name)
+        hundle.postDelayed(Runnable {
+            if (BluetoothHelper.scannedDevicesLIst?.size!! > 0){
+                if ("A4:DA:32:67:8F:77".equals(BluetoothHelper.scannedDevicesLIst?.get(0)?.deviceAddress)){
+                    (activity as MainActivity).connectToBle("A4:DA:32:67:8F:77")
+                    setAdapter()
+                }
+            }
+        },1000)
+
+        availableBleDetailsAdapter.setAdapterListener(object : ConnectedDeviceAdapter.ConnectedDeviceListener{
+            override fun onClickDeleteItem(position: Int) {
 
             }
-        }
-        scanLeDevice(leScanCallback,requireActivity())
-        Log.d(TAG, "onViewCreated: "+ BluetoothHelper.scannedDevicesLIst)
+
+        })
+
 
         super.onViewCreated(view, savedInstanceState)
     }
@@ -119,8 +136,8 @@ class HomeFragment : Fragment() ,View.OnClickListener {
         }
     }
     fun setAdapter(){
-        //availableBleDetailsAdapter= ConnectedDeviceAdapter()
-       // binding?.rvDevices?.adapter= availableBleDetailsAdapter
+        availableBleDetailsAdapter= ConnectedDeviceAdapter(connectedDevicesList)
+        binding?.rvDevices?.adapter= availableBleDetailsAdapter
     }
     companion object {
         /**
