@@ -43,10 +43,12 @@ class MainActivity : AppCompatActivity() {
                 if (!initBluetoothAdapter(this@MainActivity)) {
                     Log.e(TAG, "Unable to initialize Bluetooth")
                     finish()
+
                 }
                 // perform device connection
 
             }
+            mainViewModel.bleServiceLiveData.postValue(bleService)
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {

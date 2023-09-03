@@ -3,18 +3,13 @@ package com.srcodecorner.bluetoothlowenergy.Service
 import android.Manifest
 import android.app.Service
 import android.bluetooth.*
-import android.bluetooth.BluetoothProfile.STATE_CONNECTED
-import android.bluetooth.BluetoothProfile.STATE_DISCONNECTED
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import com.srcodecorner.bluetoothlowenergy.utils.BluetoothHelper
 import com.srcodecorner.bluetoothlowenergy.utils.BluetoothHelper.getBluetoothAdapter
-import com.srcodecorner.bluetoothlowenergy.utils.HelperFunction
-import com.srcodecorner.bluetoothlowenergy.utils.UserPermissionFunctions
 
 private val TAG="BleService"
 class BleService : Service() {
@@ -93,7 +88,7 @@ class BleService : Service() {
         return super.onUnbind(intent)
     }
 
-    private fun close() {
+     fun close() {
         bluetoothGatt?.let { gatt ->
             if (ActivityCompat.checkSelfPermission(
                     this,
@@ -113,8 +108,31 @@ class BleService : Service() {
             bluetoothGatt = null
         }
     }
+
+    fun disconnect() {
+        if ( getBluetoothAdapter() == null ||  getBluetoothAdapter() == null) {
+            Log.w(TAG, "BluetoothAdapter not initialized")
+            return
+        }
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BLUETOOTH_CONNECT
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        bluetoothGatt?.disconnect()
+    }
     private fun broadcastUpdate(action: String) {
         val intent = Intent(action)
         sendBroadcast(intent)
     }
+
 }

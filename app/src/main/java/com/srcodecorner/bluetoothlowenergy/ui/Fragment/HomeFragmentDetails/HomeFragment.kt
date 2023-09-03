@@ -98,33 +98,44 @@ class HomeFragment : Fragment() ,View.OnClickListener {
             Log.d(TAG, "onViewCreated: "+connectedDevicesList)
 
             setAdapter()
+
+            availableBleDetailsAdapter.setAdapterListener(object : ConnectedDeviceAdapter.ConnectedDeviceListener{
+                override fun onClickDeleteItem(position: Int) {
+                    mainViewModel.getbleService().observe(viewLifecycleOwner){
+                        Log.d(TAG, "onClickDeleteItem: ")
+                        it.close()
+                        it.disconnect()
+                    }
+                }
+
+            })
         }
 
         BluetoothHelper.findBleDevice(requireActivity())
-       /* requireActivity().runOnUiThread {
+
+
+        /*hundle.postDelayed(Runnable {
             if (BluetoothHelper.scannedDevicesLIst?.size!! > 0){
                 if ("A4:DA:32:67:8F:77".equals(BluetoothHelper.scannedDevicesLIst?.get(0)?.deviceAddress)){
                     (activity as MainActivity).connectToBle("A4:DA:32:67:8F:77")
-                    setAdapter()
+
+                   setAdapter()
+
+                    availableBleDetailsAdapter.setAdapterListener(object : ConnectedDeviceAdapter.ConnectedDeviceListener{
+                        override fun onClickDeleteItem(position: Int) {
+                             mainViewModel.getbleService().observe(viewLifecycleOwner){
+                                 Log.d(TAG, "onClickDeleteItem: ")
+                            it.close()
+                                 it.disconnect()
+                        }
+                    }
+
+                })
                 }
             }
-        }*/
+        },1000)*/
 
-        hundle.postDelayed(Runnable {
-            if (BluetoothHelper.scannedDevicesLIst?.size!! > 0){
-                if ("A4:DA:32:67:8F:77".equals(BluetoothHelper.scannedDevicesLIst?.get(0)?.deviceAddress)){
-                    (activity as MainActivity).connectToBle("A4:DA:32:67:8F:77")
-                    setAdapter()
-                }
-            }
-        },1000)
 
-        availableBleDetailsAdapter.setAdapterListener(object : ConnectedDeviceAdapter.ConnectedDeviceListener{
-            override fun onClickDeleteItem(position: Int) {
-
-            }
-
-        })
 
 
         super.onViewCreated(view, savedInstanceState)
